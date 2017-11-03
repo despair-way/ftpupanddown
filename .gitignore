@@ -1,0 +1,12 @@
+**/*.settings/
+**/*.idea/
+**/*.iml
+**/*.project
+**/*.git
+**/target/
+**/*.classpath
+**.properties
+*.*~
+!**.properties.bak
+**/node_modules/
+**/coverage/
