@@ -62,6 +62,31 @@ public class FTPUpAndDown{
 		}
 	}
 	
+	public static void ftpUp(String username,String password,String ip,int port,String filename,String loaclfile,String path) throws Exception{
+		FTPClient ftpClient = new FTPClient();
+		FileInputStream input = null;
+		
+		try {
+			ftpClient.connect(ip,port);
+			ftpClient.login(username, password);
+            input=new FileInputStream(new File(loaclfile));
+            ftpClient.changeWorkingDirectory(path);
+            ftpClient.storeFile(filename, input);	
+
+
+//			String remoteFlieName = "/"+filename;
+//			File localFile = new File(loaclfile);
+//			localFile.createNewFile();
+//			fos = new FileOutputStream(loaclfile);
+			
+			ftpClient.setBufferSize(1024);
+			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+			ftpClient.storeFile(filename, input);	
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 	public static void ftpDown(String username,String password,String ip,int port,String filename,String loaclfile) throws Exception{
 		FTPClient ftpClient = new FTPClient();
 		FileOutputStream fos = null;
