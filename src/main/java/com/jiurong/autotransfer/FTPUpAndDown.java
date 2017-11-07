@@ -9,13 +9,20 @@ package com.jiurong.autotransfer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.apache.commons.net.ftp.FTPClient;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * 提供ftp和sfpt上传下载功能
@@ -36,8 +43,8 @@ public class FTPUpAndDown {
 	 * @param filename
 	 * @throws Exception
 	 */
-	public static void sftpUp(String username, String password, String ip, int port, String uploadurl, String localurl,
-			String filename) throws Exception {
+	public static void sftpUp(String username, String password, String ip, int port, String uploadurl,
+			String filename,String localurl) throws Exception {
 		Session session = null;
 		Channel channel = null;
 		JSch jsch = new JSch();
@@ -61,7 +68,17 @@ public class FTPUpAndDown {
 			channel.disconnect();
 		}
 	}
-
+/**
+ * 
+ * @param username
+ * @param password
+ * @param ip
+ * @param port
+ * @param downloadurl
+ * @param localurl
+ * @param filename
+ */
+	
 	public static void sftpDown(String username, String password, String ip, int port, String downloadurl,
 			String localurl, String filename) {
 		Channel channel = null;
@@ -87,7 +104,17 @@ public class FTPUpAndDown {
 			channel.disconnect();
 		}
 	}
-
+/**
+ * 
+ * @param username
+ * @param password
+ * @param ip
+ * @param port
+ * @param filename
+ * @param loaclfile
+ * @param path
+ * @throws Exception
+ */
 	public static void ftpUp(String username, String password, String ip, int port, String filename, String loaclfile,
 			String path) throws Exception {
 		FTPClient ftpClient = new FTPClient();
@@ -106,7 +133,16 @@ public class FTPUpAndDown {
 			e.printStackTrace();
 		}
 	}
-
+/**
+ * 
+ * @param username
+ * @param password
+ * @param ip
+ * @param port
+ * @param filename
+ * @param loaclfile
+ * @throws Exception
+ */
 	public static void ftpDown(String username, String password, String ip, int port, String filename, String loaclfile)
 			throws Exception {
 		FTPClient ftpClient = new FTPClient();
@@ -136,5 +172,38 @@ public class FTPUpAndDown {
 		}
 
 	}
+/**
+ * 
+ * @param info
+ * @throws Exception
+ */
+	public static void ftpDown(FTPInfo info)
+			throws Exception {
+		FTPClient ftpClient = new FTPClient();
+		FileOutputStream fos = null;
 
+		try {
+			ftpClient.connect(info.getIp(), info.getPort());
+			ftpClient.login(info.getUsername(), info.getPassword());
+			String remoteFlieName = info.getFilename();
+			File localFile = new File(info.getLoaclfile());
+			if (localFile.exists()) {
+				localFile.delete();
+			}
+			localFile.createNewFile();
+			fos = new FileOutputStream(info.getFilename());
+
+			ftpClient.setBufferSize(1024);
+			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+			ftpClient.retrieveFile(remoteFlieName, fos);
+			fos.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (fos != null) {
+				fos.close();
+			}
+		}
+
+	}
 }

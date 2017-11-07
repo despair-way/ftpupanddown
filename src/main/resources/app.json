@@ -1,14 +1,16 @@
-[
-	{
-		"source": {
-			"ip": ""
-		},
-		"target": {}
+{
+	"source": {
+		"username": "remote",
+		"password": "Jiurong20151009",
+		"ip": "101.200.242.103",
+		"port": 21,
+		"filename": "Downloadtest.txt"
 	},
-	{
-		"source": {
-			"ip": ""
-		},
-		"target": {}
+	"target": {
+		"username": "jiurong",
+		"password": "Jr88362624",
+		"ip": "192.168.1.20",
+		"port": 32022,
+		"filename": "upload.txt"
 	}
-]
+}
