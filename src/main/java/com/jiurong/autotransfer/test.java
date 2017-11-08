@@ -22,7 +22,7 @@ public class test {
 		TransferConfig config = objectMapper.readValue(content, TransferConfig.class);
 //		System.out.println(config.getSource());
 		
-		FTPUpAndDown.ftpUp(FTPUpAndDown.UpInfo(config));
+		FTPUpAndDown.ftpUp(FTPUpAndDown.upInfo(config));
 	}
 }
 

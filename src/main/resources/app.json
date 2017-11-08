@@ -5,7 +5,8 @@
 		"password": "Jr88362624",
 		"ip": "192.168.1.20",
 		"port": 32022,
-		"filepath": "test/upload.txt"
+		"filepath": "test/upload.txt",
+		"localpath": "F:/test/"
 
 	},
 	"target": {

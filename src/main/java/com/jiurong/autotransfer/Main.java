@@ -16,14 +16,14 @@ public class Main {
 		ObjectMapper objectMapper = new ObjectMapper();
 		TransferConfig config = objectMapper.readValue(content, TransferConfig.class);
 		if (config.getSource().getType().equals("FTP")) {
-			FTPUpAndDown.ftpDown(FTPUpAndDown.DownInfo(config));
+			FTPUpAndDown.ftpDown(FTPUpAndDown.downInfo(config));
 		}else {
-			FTPUpAndDown.sftpDown(FTPUpAndDown.DownInfo(config));
+			FTPUpAndDown.sftpDown(FTPUpAndDown.downInfo(config));
 		}
 		if (config.getSource().getType().equals("FTP")) {
-			FTPUpAndDown.ftpUp(FTPUpAndDown.UpInfo(config));
+			FTPUpAndDown.ftpUp(FTPUpAndDown.upInfo(config));
 		}else {
-			FTPUpAndDown.sftpUp(FTPUpAndDown.UpInfo(config));		
+			FTPUpAndDown.sftpUp(FTPUpAndDown.upInfo(config));		
 		}
 		
 		

@@ -26,24 +26,26 @@ import com.jiurong.autotransfer.config.TransferConfig;
  */
 public class FTPUpAndDown {
 
-	public static  UpInfo UpInfo(TransferConfig transferconfig) {
+	public static  UpInfo upInfo(TransferConfig transferconfig) {
 		UpInfo upinfo = new UpInfo();
 		upinfo.setUsername(transferconfig.getTarget().getUsername());
 		upinfo.setPassword(transferconfig.getTarget().getPassword());
 		upinfo.setIp(transferconfig.getTarget().getIp());
 		upinfo.setPort(transferconfig.getTarget().getPort());
 		upinfo.setFilepath(transferconfig.getTarget().getFilepath());
+		upinfo.setLocalpath(transferconfig.getSource().getLocalpath());
 		return upinfo;
 	}
 
 
-	public static  DownInfo DownInfo(TransferConfig transferconfig) {
+	public static  DownInfo downInfo(TransferConfig transferconfig) {
 		DownInfo downinfo = new DownInfo();
 		downinfo.setUsername(transferconfig.getSource().getUsername());
 		downinfo.setPassword(transferconfig.getSource().getPassword());
 		downinfo.setIp(transferconfig.getSource().getIp());
 		downinfo.setPort(transferconfig.getSource().getPort());
 		downinfo.setFilepath(transferconfig.getSource().getFilepath());
+		downinfo.setLocalpath(transferconfig.getSource().getLocalpath());
 		return downinfo;
 	}
 
@@ -100,7 +102,7 @@ public class FTPUpAndDown {
 			channel.connect();
 			ChannelSftp sftp = (ChannelSftp) channel;
 			sftp.cd(file.getParent());
-			sftp.put(new FileInputStream(new File("F:/test/"+file.getName())), file.getName());
+			sftp.put(new FileInputStream(new File(upinfo.getFilepath()+file.getName())), file.getName());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -124,7 +126,7 @@ public class FTPUpAndDown {
 			channel = session.openChannel("sftp");
 			channel.connect();
 			ChannelSftp sftp = (ChannelSftp) channel;
-			sftp.get(downinfo.getFilepath(), new FileOutputStream("F:/test/"+file.getName()));
+			sftp.get(downinfo.getFilepath(), new FileOutputStream(downinfo.getFilepath()+file.getName()));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -170,7 +172,7 @@ public class FTPUpAndDown {
 		try {
 			ftpClient.connect(upinfo.getIp(), upinfo.getPort());
 			ftpClient.login(upinfo.getUsername(), upinfo.getPassword());
-			input = new FileInputStream(new File("F:/test/"+file.getName()));
+			input = new FileInputStream(new File(upinfo.getFilepath()+file.getName()));
 			ftpClient.changeWorkingDirectory(file.getParent());
 			ftpClient.setBufferSize(1024);
 			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
@@ -241,12 +243,12 @@ public class FTPUpAndDown {
 			ftpClient.login(downinfo.getUsername(), downinfo.getPassword());
 			String remoteFlieName = downinfo.getFilepath();
 			File file = new File(downinfo.getFilepath());
-			File localFile = new File("F:/test/"+file.getName());
+			File localFile = new File(downinfo.getFilepath()+file.getName());
 			if (localFile.exists()) {
 				localFile.delete();
 			}
 			localFile.createNewFile();
-			fos = new FileOutputStream("F:/test/"+file.getName());
+			fos = new FileOutputStream(downinfo.getFilepath()+file.getName());
 
 			ftpClient.setBufferSize(1024);
 			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);

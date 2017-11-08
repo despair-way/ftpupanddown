@@ -7,6 +7,7 @@ public class UpInfo {
 	private String ip;
 	private int port;
 	private String filepath;
+	private String localpath;
 
 	public String getUsername() {
 		return username;
@@ -46,6 +47,14 @@ public class UpInfo {
 
 	public void setFilepath(String filepath) {
 		this.filepath = filepath;
+	}
+
+	public String getLocalpath() {
+		return localpath;
+	}
+
+	public void setLocalpath(String localpath) {
+		this.localpath = localpath;
 	}
 
 }
