@@ -1,6 +1,6 @@
 package com.jiurong.autotransfer.config;
 
-public class SourceConfig {
+public class TargetConfig {
 
 	private String type;
 	private String username;
@@ -26,7 +26,7 @@ public class SourceConfig {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public String getIp() { 
+	public String getIp() {
 		return ip;
 	}
 	public void setIp(String ip) {
@@ -44,6 +44,7 @@ public class SourceConfig {
 	public void setFilepath(String filepath) {
 		this.filepath = filepath;
 	}
+
 
 
 }

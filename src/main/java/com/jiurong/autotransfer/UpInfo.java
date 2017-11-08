@@ -1,12 +1,12 @@
 package com.jiurong.autotransfer;
 
-public class FTPInfo {
-	private String username;
+public class UpInfo {
+
+	public String username;
 	private String password;
 	private String ip;
 	private int port;
-	private String filename;
-	private String loaclfile;
+	private String filepath;
 
 	public String getUsername() {
 		return username;
@@ -40,19 +40,12 @@ public class FTPInfo {
 		this.port = port;
 	}
 
-	public String getFilename() {
-		return filename;
+	public String getFilepath() {
+		return filepath;
 	}
 
-	public void setFilename(String filename) {
-		this.filename = filename;
+	public void setFilepath(String filepath) {
+		this.filepath = filepath;
 	}
 
-	public String getLoaclfile() {
-		return loaclfile;
-	}
-
-	public void setLoaclfile(String loaclfile) {
-		this.loaclfile = loaclfile;
-	}
 }

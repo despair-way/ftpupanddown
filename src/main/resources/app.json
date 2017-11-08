@@ -1,16 +1,19 @@
 {
-	"source": {
-		"username": "remote",
-		"password": "Jiurong20151009",
-		"ip": "101.200.242.103",
-		"port": 21,
-		"filename": "Downloadtest.txt"
-	},
-	"target": {
+	"source": {		
+		"type":"SFTP",
 		"username": "jiurong",
 		"password": "Jr88362624",
 		"ip": "192.168.1.20",
 		"port": 32022,
-		"filename": "upload.txt"
+		"filepath": "test/upload.txt"
+
+	},
+	"target": {
+		"type":"FTP",
+		"username": "remote",
+		"password": "Jiurong20151009",
+		"ip": "101.200.242.103",
+		"port": 21,
+		"filepath": "Downloadtest.txt"
 	}
 }
