@@ -1,6 +1,7 @@
 package com.jiurong.autotransfer;
 
 
+import java.io.File;
 import java.io.InputStream;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jiurong.autotransfer.config.TransferConfig;
@@ -21,8 +22,8 @@ public class test {
 		ObjectMapper objectMapper = new ObjectMapper();
 		TransferConfig config = objectMapper.readValue(content, TransferConfig.class);
 //		System.out.println(config.getSource());
-		
-		FTPUpAndDown.ftpUp(FTPUpAndDown.upInfo(config));
+		File localfile = null;
+		FTPUpAndDown.ftpUp(config.getSource().getUsername(),config.getSource().getPassword(),config.getSource().getIp(),config.getSource().getPort(),config.getSource().getFilepath(),localfile);
 	}
 }
 

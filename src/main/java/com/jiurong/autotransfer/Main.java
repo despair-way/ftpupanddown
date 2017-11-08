@@ -5,6 +5,8 @@
  */
 
 package com.jiurong.autotransfer;
+
+import java.io.File;
 import java.io.InputStream;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jiurong.autotransfer.config.TransferConfig;
@@ -15,22 +17,28 @@ public class Main {
 		InputStream content = TransferConfig.class.getClassLoader().getResourceAsStream("app.json");
 		ObjectMapper objectMapper = new ObjectMapper();
 		TransferConfig config = objectMapper.readValue(content, TransferConfig.class);
+		File localfile = null;
 		if (config.getSource().getType().equals("FTP")) {
-			FTPUpAndDown.ftpDown(FTPUpAndDown.downInfo(config));
-		}else {
-			FTPUpAndDown.sftpDown(FTPUpAndDown.downInfo(config));
+			FTPUpAndDown.ftpDown(config.getTarget().getUsername(), config.getTarget().getPassword(),
+					config.getTarget().getIp(), config.getTarget().getPort(), config.getTarget().getFilepath());
+			localfile = FTPUpAndDown.ftpDown(config.getTarget().getUsername(), config.getTarget().getPassword(),
+					config.getTarget().getIp(), config.getTarget().getPort(), config.getTarget().getFilepath());
+		} else {
+			FTPUpAndDown.sftpDown(config.getTarget().getUsername(), config.getTarget().getPassword(),
+					config.getTarget().getIp(), config.getTarget().getPort(), config.getTarget().getFilepath());
+			localfile = FTPUpAndDown.ftpDown(config.getTarget().getUsername(), config.getTarget().getPassword(),
+					config.getTarget().getIp(), config.getTarget().getPort(), config.getTarget().getFilepath());
 		}
 		if (config.getSource().getType().equals("FTP")) {
-			FTPUpAndDown.ftpUp(FTPUpAndDown.upInfo(config));
-		}else {
-			FTPUpAndDown.sftpUp(FTPUpAndDown.upInfo(config));		
+			FTPUpAndDown.ftpUp(config.getSource().getUsername(),config.getSource().getPassword(),config.getSource().getIp(),config.getSource().getPort(),config.getSource().getFilepath(),localfile);
+		} else {
+			FTPUpAndDown.sftpUp(config.getSource().getUsername(),config.getSource().getPassword(),config.getSource().getIp(),config.getSource().getPort(),config.getSource().getFilepath(),localfile);
 		}
-		
-		
-		
-		
-		FTPUpAndDown.ftpDown("remote", "Jiurong20151009", "101.200.242.103", 21, "Downloadtest.txt", "F:/test/DownLoad.txt");
-		FTPUpAndDown.sftpUp("jiurong", "Jr88362624", "192.168.1.20", 32022, "test","upload.txt", "F:/test/DownLoad.txt");
-		System.out.println("success");
+
+//		FTPUpAndDown.ftpDown("remote", "Jiurong20151009", "101.200.242.103", 21, "Downloadtest.txt",
+//				"F:/test/DownLoad.txt");
+//		FTPUpAndDown.sftpUp("jiurong", "Jr88362624", "192.168.1.20", 32022, "test", "upload.txt",
+//				"F:/test/DownLoad.txt");
+//		System.out.println("success");
 	}
 }
