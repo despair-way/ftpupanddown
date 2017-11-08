@@ -174,7 +174,7 @@ public class FTPUpAndDown {
 			ftpClient.changeWorkingDirectory(file.getParent());
 			ftpClient.setBufferSize(1024);
 			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-			ftpClient.storeFile("F:/test/"+file.getName(), input);
+			ftpClient.storeFile(upinfo.getFilepath(), input);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
