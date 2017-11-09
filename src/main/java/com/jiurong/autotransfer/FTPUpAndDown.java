@@ -58,6 +58,7 @@ public class FTPUpAndDown {
  * @param localfile
  * @throws Exception
  */
+
 	public static void sftpUp(String username, String password, String ip, int port, String filepath,
 			File localfile) throws Exception {
 			Session session = null;
@@ -86,6 +87,13 @@ public class FTPUpAndDown {
 			}
 		}
 	
+	/**
+	 * 
+	 * @param upinfo
+	 * @param localfile
+	 * @throws Exception
+	 */
+	
 	public static void sftpUp(UpInfo upinfo,File localfile) throws Exception {
 		Session session = null;
 		Channel channel = null;
@@ -112,7 +120,15 @@ public class FTPUpAndDown {
 	    	localfile.deleteOnExit();
 		}
 	}
-
+/**
+ * 
+ * @param username
+ * @param password
+ * @param ip
+ * @param port
+ * @param filepath
+ * @return
+ */
 
 	public static File sftpDown(String username,String password,String ip,int port,String filepath) {
 		Channel channel = null;
@@ -149,9 +165,8 @@ public class FTPUpAndDown {
 	 * @param password
 	 * @param ip
 	 * @param port
-	 * @param filename
-	 * @param loaclfile
-	 * @param path
+	 * @param filepath
+	 * @param localfile
 	 * @throws Exception
 	 */
 	public static void ftpUp(String username,String password,String ip,int port,String filepath,File localfile) throws Exception {
@@ -180,6 +195,12 @@ public class FTPUpAndDown {
 			}
 		}
 	}  
+	/**
+	 * 
+	 * @param upinfo
+	 * @param localfile
+	 * @throws Exception
+	 */
 	public static void ftpUp(UpInfo upinfo,File localfile) throws Exception {
 		FTPClient ftpClient = new FTPClient();
 		FileInputStream input = null;
@@ -212,8 +233,8 @@ public class FTPUpAndDown {
 	 * @param password
 	 * @param ip
 	 * @param port
-	 * @param filename
-	 * @param loaclfile
+	 * @param filepath
+	 * @return
 	 * @throws Exception
 	 */
 	public static File ftpDown(String username,String password,String ip,int port,String filepath) throws Exception {
@@ -251,7 +272,8 @@ public class FTPUpAndDown {
 
 	/**
 	 * 
-	 * @param info
+	 * @param downinfo
+	 * @return
 	 * @throws Exception
 	 */
 	public static File ftpDown(DownInfo downinfo) throws Exception {
