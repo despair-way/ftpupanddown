@@ -25,22 +25,20 @@ import com.jcraft.jsch.Session;
  */
 public class FTPUpAndDown {
 
-	/**
+	/*
+	 * @param username sftp服务器的用户名
 	 * 
-	 * @param username
-	 *            //sftp服务器的用户名
-	 * @param password
-	 *            //sftp服务器的密码
-	 * @param ip
-	 *            //sftp服务器的访问ip
-	 * @param port
-	 *            //sftp服务的端口号
-	 * @param filepath
-	 *            //文件上传之后的FullPath
-	 * @param localfile
-	 *            //本地文件的File对象
-	 * @throws FileNotFoundException，IOException，JSchException
-	 *             用户名、密码、ip、端口号不正确
+	 * @param password sftp服务器的密码
+	 * 
+	 * @param ip sftp服务器的访问ip
+	 * 
+	 * @param port sftp服务的端口号
+	 * 
+	 * @param filepath 文件上传之后的FullPath
+	 * 
+	 * @param localfile 本地文件的File对象
+	 * 
+	 * @throws FileNotFoundException，IOException，JSchException 用户名、密码、ip、端口号不正确
 	 */
 
 	public static void sftpUp(String username, String password, String ip, int port, String filepath, File localfile)
@@ -66,13 +64,11 @@ public class FTPUpAndDown {
 			sftp.put(inStream, FilenameUtils.getName(filepath));
 		} finally {
 			if (inStream != null) {
-				try {
-					inStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				inStream.close();
 			}
-			session.disconnect();
+			if (session != null) {
+				session.disconnect();
+			}
 			if (channel != null) {
 				channel.disconnect();
 			}
@@ -80,19 +76,19 @@ public class FTPUpAndDown {
 		}
 	}
 
-	/**
+	/*
 	 * 
-	 * @param username
-	 *            //sftp服务器的用户名
-	 * @param password
-	 *            //sftp服务器的密码
-	 * @param ip
-	 *            //sftp服务器的访问ip
-	 * @param port
-	 *            //sftp服务的端口号
-	 * @param filepath
-	 *            //文件上传之后的FullPath
-	 * @return file //返回下载到本地的File对象
+	 * @param username sftp服务器的用户名
+	 * 
+	 * @param password sftp服务器的密码
+	 * 
+	 * @param ip sftp服务器的访问ip
+	 * 
+	 * @param port sftp服务的端口号
+	 * 
+	 * @param filepath 文件上传之后的FullPath
+	 * 
+	 * @return file 返回下载到本地的File对象
 	 */
 
 	public static File sftpDown(String username, String password, String ip, int port, String filepath)
@@ -120,38 +116,35 @@ public class FTPUpAndDown {
 
 		} finally {
 			if (outStream != null) {
-				try {
-					outStream.close();
-				} catch (IOException e) {
-					// TODO: handle exception
-					e.printStackTrace();
-				}
+				outStream.close();
+			}
 
-			}
+		}
+		if (session != null) {
 			session.disconnect();
-			if (channel != null) {
-				channel.disconnect();
-			}
+		}
+		if (channel != null) {
+			channel.disconnect();
 		}
 		return localfile;
+
 	}
 
-	/**
+	/*
 	 * 
-	 * @param username
-	 *            //sftp服务器的用户名
-	 * @param password
-	 *            //sftp服务器的密码
-	 * @param ip
-	 *            //sftp服务器的访问ip
-	 * @param port
-	 *            //sftp服务的端口号
-	 * @param filepath
-	 *            //文件上传之后的FullPath
-	 * @param localfile
-	 *            //本地文件的File对象
-	 * @throws SocketException,
-	 *             IOException ，FileNotFoundException
+	 * @param username sftp服务器的用户名
+	 * 
+	 * @param password sftp服务器的密码
+	 * 
+	 * @param ip sftp服务器的访问ip
+	 * 
+	 * @param port sftp服务的端口号
+	 * 
+	 * @param filepath 文件上传之后的FullPath
+	 * 
+	 * @param localfile 本地文件的File对象
+	 * 
+	 * @throws SocketException,IOException ，FileNotFoundException
 	 */
 	public static void ftpUp(String username, String password, String ip, int port, String filepath, File localfile)
 			throws Exception {
@@ -165,32 +158,31 @@ public class FTPUpAndDown {
 			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 			ftpClient.storeFile(filepath, inStream);
 		} finally {
-			try {
-				if (inStream != null) {
-					inStream.close();
-				}
+
+			if (inStream != null) {
+				inStream.close();
+			}
+			if (ftpClient != null) {
 				ftpClient.disconnect();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 	}
 
-	/**
+	/*
 	 * 
-	 * @param username
-	 *            //sftp服务器的用户名
-	 * @param password
-	 *            //sftp服务器的密码
-	 * @param ip
-	 *            //sftp服务器的访问ip
-	 * @param port
-	 *            //sftp服务的端口号
-	 * @param filepath
-	 *            //文件上传之后的FullPath
-	 * @return file //返回下载到本地的File对象
-	 * @throws SocketException,
-	 *             IOException ，FileNotFoundException
+	 * @param username sftp服务器的用户名
+	 * 
+	 * @param password sftp服务器的密码
+	 * 
+	 * @param ip sftp服务器的访问ip
+	 * 
+	 * @param port sftp服务的端口号
+	 * 
+	 * @param filepath 文件上传之后的FullPath
+	 * 
+	 * @return file 返回下载到本地的File对象
+	 * 
+	 * @throws SocketException,IOException ，FileNotFoundException
 	 */
 	public static File ftpDown(String username, String password, String ip, int port, String filepath)
 			throws Exception {
@@ -210,15 +202,12 @@ public class FTPUpAndDown {
 			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 			ftpClient.retrieveFile(filepath, outSteam);
 			outSteam.flush();
-
 		} finally {
-			try {
-				if (outSteam != null) {
-					outSteam.close();
-				}
+			if (outSteam != null) {
+				outSteam.close();
+			}
+			if (ftpClient != null) {
 				ftpClient.disconnect();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 		return localfile;

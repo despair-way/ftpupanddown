@@ -24,28 +24,27 @@ public class Main {
 		List<TransferConfig> list = objectMapper.readValue(content, new TypeReference<List<TransferConfig>>() {
 		});
 		File localfile = null;
-		try {
-			for (int i = 0; i < list.size(); i++) {
-				SourceConfig source = list.get(i).getSource();
-				TargetConfig target = list.get(i).getTarget();
+		for (TransferConfig transferConfig : list) {
+			SourceConfig source = transferConfig.getSource();
+			TargetConfig target = transferConfig.getTarget();
 
-				if (source.getType().equals("FTP")) {
-					localfile = FTPUpAndDown.ftpDown(source.getUsername(), source.getPassword(), source.getIp(),
-							source.getPort(), source.getFilepath());
-				} else {
-					localfile = FTPUpAndDown.sftpDown(source.getUsername(), source.getPassword(), source.getIp(),
-							source.getPort(), source.getFilepath());
-				}
-				if (target.getType().equals("FTP")) {
-					FTPUpAndDown.ftpUp(target.getUsername(), target.getPassword(), target.getIp(), target.getPort(),
-							target.getFilepath(), localfile);
-				} else {
-					FTPUpAndDown.sftpUp(target.getUsername(), target.getPassword(), target.getIp(), target.getPort(),
-							target.getFilepath(), localfile);
-				}
+			if (source.getType().equals("FTP")) {
+				localfile = FTPUpAndDown.ftpDown(source.getUsername(), source.getPassword(), source.getIp(),
+						source.getPort(), source.getFilepath());
+			} else {
+				localfile = FTPUpAndDown.sftpDown(source.getUsername(), source.getPassword(), source.getIp(),
+						source.getPort(), source.getFilepath());
 			}
-		} finally {
-			localfile.deleteOnExit();
+			if (target.getType().equals("FTP")) {
+				FTPUpAndDown.ftpUp(target.getUsername(), target.getPassword(), target.getIp(), target.getPort(),
+						target.getFilepath(), localfile);
+			} else {
+				FTPUpAndDown.sftpUp(target.getUsername(), target.getPassword(), target.getIp(), target.getPort(),
+						target.getFilepath(), localfile);
+
+				localfile.deleteOnExit();
+
+			}
 		}
 	}
 }
