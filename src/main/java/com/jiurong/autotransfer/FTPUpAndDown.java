@@ -5,19 +5,17 @@
  */
 
 package com.jiurong.autotransfer;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
-import com.jiurong.autotransfer.config.TransferConfig;
-
 
 /**
  * 提供ftp和sfpt上传下载功能
@@ -27,284 +25,202 @@ import com.jiurong.autotransfer.config.TransferConfig;
  */
 public class FTPUpAndDown {
 
-	public static  UpInfo upInfo(TransferConfig transferconfig) {
-		UpInfo upinfo = new UpInfo();
-		upinfo.setUsername(transferconfig.getTarget().getUsername());
-		upinfo.setPassword(transferconfig.getTarget().getPassword());
-		upinfo.setIp(transferconfig.getTarget().getIp());
-		upinfo.setPort(transferconfig.getTarget().getPort());
-		upinfo.setFilepath(transferconfig.getTarget().getFilepath());
-		return upinfo;
-	}
+	/**
+	 * 
+	 * @param username
+	 *            //sftp服务器的用户名
+	 * @param password
+	 *            //sftp服务器的密码
+	 * @param ip
+	 *            //sftp服务器的访问ip
+	 * @param port
+	 *            //sftp服务的端口号
+	 * @param filepath
+	 *            //文件上传之后的FullPath
+	 * @param localfile
+	 *            //本地文件的File对象
+	 * @throws FileNotFoundException，IOException，JSchException
+	 *             用户名、密码、ip、端口号不正确
+	 */
 
-
-	public static  DownInfo downInfo(TransferConfig transferconfig) {
-		DownInfo downinfo = new DownInfo();
-		downinfo.setUsername(transferconfig.getSource().getUsername());
-		downinfo.setPassword(transferconfig.getSource().getPassword());
-		downinfo.setIp(transferconfig.getSource().getIp());
-		downinfo.setPort(transferconfig.getSource().getPort());
-		downinfo.setFilepath(transferconfig.getSource().getFilepath());
-		return downinfo;
-	}
-
-/**
- * 
- * @param username
- * @param password
- * @param ip
- * @param port
- * @param filepath
- * @param localfile
- * @throws Exception
- */
-
-	public static void sftpUp(String username, String password, String ip, int port, String filepath,
-			File localfile) throws Exception {
-			Session session = null;
-			Channel channel = null;
-			JSch jsch = new JSch();
-			session = jsch.getSession(username, ip,port);
+	public static void sftpUp(String username, String password, String ip, int port, String filepath, File localfile)
+			throws Exception {
+		Session session = null;
+		Channel channel = null;
+		JSch jsch = new JSch();
+		FileInputStream inStream = null;
+		try {
+			session = jsch.getSession(username, ip, port);
 			java.util.Properties config = new java.util.Properties();
 			config.put("StrictHostKeyChecking", "no");
 			session.setConfig(config);
 			session.setPassword(password);
 			session.connect();
 			File file = new File(filepath);
-			try {
-				channel = session.openChannel("sftp");
-				channel.connect();
-				ChannelSftp sftp = (ChannelSftp) channel;
-				sftp.cd(file.getParent());
-				sftp.put(new FileInputStream(localfile), localfile.getName());
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				session.disconnect();
-				channel.disconnect();
-		    	localfile.deleteOnExit();
-			}
-		}
-	
-	/**
-	 * 
-	 * @param upinfo
-	 * @param localfile
-	 * @throws Exception
-	 */
-	
-	public static void sftpUp(UpInfo upinfo,File localfile) throws Exception {
-		Session session = null;
-		Channel channel = null;
-		JSch jsch = new JSch();
-		session = jsch.getSession(upinfo.getUsername(), upinfo.getIp(), upinfo.getPort());
-		java.util.Properties config = new java.util.Properties();
-		config.put("StrictHostKeyChecking", "no");
-		session.setConfig(config);
-		session.setPassword(upinfo.getPassword());
-		session.connect();
-		File file = new File(upinfo.getFilepath());
-		try {
 			channel = session.openChannel("sftp");
 			channel.connect();
 			ChannelSftp sftp = (ChannelSftp) channel;
 			sftp.cd(file.getParent());
-			sftp.put(new FileInputStream(localfile), localfile.getName());
-
-		} catch (Exception e) {
-			e.printStackTrace();
+			inStream = new FileInputStream(localfile);
+			;
+			sftp.put(inStream, localfile.getName());
 		} finally {
+			if (inStream != null) {
+				try {
+					inStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 			session.disconnect();
-			channel.disconnect();
-	    	localfile.deleteOnExit();
+			if (channel != null) {
+				channel.disconnect();
+			}
+
 		}
 	}
-/**
- * 
- * @param username
- * @param password
- * @param ip
- * @param port
- * @param filepath
- * @return
- */
 
-	public static File sftpDown(String username,String password,String ip,int port,String filepath) {
+	/**
+	 * 
+	 * @param username
+	 *            //sftp服务器的用户名
+	 * @param password
+	 *            //sftp服务器的密码
+	 * @param ip
+	 *            //sftp服务器的访问ip
+	 * @param port
+	 *            //sftp服务的端口号
+	 * @param filepath
+	 *            //文件上传之后的FullPath
+	 * @return file //返回下载到本地的File对象
+	 */
+
+	public static File sftpDown(String username, String password, String ip, int port, String filepath)
+			throws Exception {
 		Channel channel = null;
 		Session session = null;
 		JSch jsch = new JSch();
+		FileOutputStream outStream = null;
+		File localfile = null;
 		try {
-			session = jsch.getSession(username,ip,port);
+			session = jsch.getSession(username, ip, port);
 			session.setConfig("StrictHostKeyChecking", "no");
 			session.setPassword(password);
 			session.connect();
 			channel = session.openChannel("sftp");
 			channel.connect();
 			ChannelSftp sftp = (ChannelSftp) channel;
-			File file =  new File(filepath);
+			File file = new File(filepath);
 			String tempfile = file.getName();
-			String extension = FilenameUtils.getExtension(tempfile); //文件后缀名
-			String basename = FilenameUtils.getBaseName(tempfile);  //文件名（不加后缀）
-			File localfile = File.createTempFile(basename, extension);
-			sftp.get(filepath, new FileOutputStream(localfile));
-			return localfile;
-		} catch (Exception e) {
-			e.printStackTrace();
-			File file = null;
-			return file;
+			String extension = tempfile.substring(tempfile.indexOf('.')); // 文件后缀名
+			String basename = FilenameUtils.getBaseName(tempfile); // 文件名（不加后缀）
+			localfile = File.createTempFile(basename, extension);
+			outStream = new FileOutputStream(localfile);
+			sftp.get(filepath, outStream);
+
 		} finally {
+			if (outStream != null) {
+				try {
+					outStream.close();
+				} catch (IOException e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+
+			}
 			session.disconnect();
-			channel.disconnect();
+			if (channel != null) {
+				channel.disconnect();
+			}
+		}
+		return localfile;
+	}
+
+	/**
+	 * 
+	 * @param username
+	 *            //sftp服务器的用户名
+	 * @param password
+	 *            //sftp服务器的密码
+	 * @param ip
+	 *            //sftp服务器的访问ip
+	 * @param port
+	 *            //sftp服务的端口号
+	 * @param filepath
+	 *            //文件上传之后的FullPath
+	 * @param localfile
+	 *            //本地文件的File对象
+	 * @throws SocketException,
+	 *             IOException ，FileNotFoundException
+	 */
+	public static void ftpUp(String username, String password, String ip, int port, String filepath, File localfile)
+			throws Exception {
+		FTPClient ftpClient = new FTPClient();
+		FileInputStream inStream = null;
+		try {
+			ftpClient.connect(ip, port);
+			ftpClient.login(username, password);
+			inStream = new FileInputStream(localfile);
+			ftpClient.setBufferSize(1024);
+			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+			ftpClient.storeFile(filepath, inStream);
+		} finally {
+			try {
+				if (inStream != null) {
+					inStream.close();
+				}
+				ftpClient.disconnect();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	/**
 	 * 
 	 * @param username
+	 *            //sftp服务器的用户名
 	 * @param password
+	 *            //sftp服务器的密码
 	 * @param ip
+	 *            //sftp服务器的访问ip
 	 * @param port
+	 *            //sftp服务的端口号
 	 * @param filepath
-	 * @param localfile
-	 * @throws Exception
+	 *            //文件上传之后的FullPath
+	 * @return file //返回下载到本地的File对象
+	 * @throws SocketException,
+	 *             IOException ，FileNotFoundException
 	 */
-	public static void ftpUp(String username,String password,String ip,int port,String filepath,File localfile) throws Exception {
+	public static File ftpDown(String username, String password, String ip, int port, String filepath)
+			throws Exception {
 		FTPClient ftpClient = new FTPClient();
-		FileInputStream input = null;
+		FileOutputStream outSteam = null;
+		File localfile = null;
 		try {
 			ftpClient.connect(ip, port);
 			ftpClient.login(username, password);
-			input = new FileInputStream(localfile);
-		//	ftpClient.changeWorkingDirectory(localfile.getParent());
-			ftpClient.setBufferSize(1024);
-			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-			ftpClient.storeFile(filepath, input);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally {
-		    try {
-		        if (input != null) {
-		        	input.close();
-		        }
-		        ftpClient.disconnect();
-		    } catch (IOException e) {
-		        e.printStackTrace();
-		    } finally {
-		    	localfile.deleteOnExit();
-			}
-		}
-	}  
-	/**
-	 * 
-	 * @param upinfo
-	 * @param localfile
-	 * @throws Exception
-	 */
-	public static void ftpUp(UpInfo upinfo,File localfile) throws Exception {
-		FTPClient ftpClient = new FTPClient();
-		FileInputStream input = null;
-		try {
-			ftpClient.connect(upinfo.getIp(), upinfo.getPort());
-			ftpClient.login(upinfo.getUsername(), upinfo.getPassword());
-			input = new FileInputStream(localfile);
-		//	ftpClient.changeWorkingDirectory(localfile.getParent());
-			ftpClient.setBufferSize(1024);
-			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-			ftpClient.storeFile(upinfo.getFilepath(), input);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally {
-		    try {
-		        if (input != null) {
-		        	input.close();
-		        }
-		        ftpClient.disconnect();
-		    } catch (IOException e) {
-		        e.printStackTrace();
-		    } finally {
-		    	localfile.deleteOnExit();
-			}
-		}
-	}              
-	/**
-	 * 
-	 * @param username
-	 * @param password
-	 * @param ip
-	 * @param port
-	 * @param filepath
-	 * @return
-	 * @throws Exception
-	 */
-	public static File ftpDown(String username,String password,String ip,int port,String filepath) throws Exception {
-		FTPClient ftpClient = new FTPClient();
-		FileOutputStream fos = null;
-
-		try {
-			ftpClient.connect(ip, port);
-			ftpClient.login(username, password);
-			File file =  new File(filepath);
+			File file = new File(filepath);
 			String tempfile = file.getName();
-			String extension = FilenameUtils.getExtension(tempfile); //文件后缀名
-			String basename = FilenameUtils.getBaseName(tempfile);  //文件名（不加后缀）
-			File localfile = File.createTempFile(basename, extension);
-			//判断本地是否有同名文件进行删除处理
-			if (localfile.exists()) {
-				localfile.delete();
-			}
-			localfile.createNewFile();
-			fos = new FileOutputStream(localfile);
-
+			String extension = tempfile.substring(tempfile.indexOf('.'));// 文件后缀名
+			String basename = FilenameUtils.getBaseName(tempfile); // 文件名（不加后缀）
+			localfile = File.createTempFile(basename, extension);
+			outSteam = new FileOutputStream(localfile);
 			ftpClient.setBufferSize(1024);
 			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-			ftpClient.retrieveFile(filepath, fos);
-			fos.flush();
-			return localfile;
-		}  finally {
-			if (fos != null) {
-				fos.close();
-			}	
-		}
+			ftpClient.retrieveFile(filepath, outSteam);
+			outSteam.flush();
 
-	}
-	
-
-	/**
-	 * 
-	 * @param downinfo
-	 * @return
-	 * @throws Exception
-	 */
-	public static File ftpDown(DownInfo downinfo) throws Exception {
-		FTPClient ftpClient = new FTPClient();
-		FileOutputStream fos = null;
-
-		try {
-			ftpClient.connect(downinfo.getIp(), downinfo.getPort());
-			ftpClient.login(downinfo.getUsername(), downinfo.getPassword());
-			File file =  new File(downinfo.getFilepath());
-			String tempfile = file.getName();
-			String extension = FilenameUtils.getExtension(tempfile); //文件后缀名
-			String basename = FilenameUtils.getBaseName(tempfile);  //文件名（不加后缀）
-			File localfile = File.createTempFile(basename, extension);
-			//判断本地是否有同名文件进行删除处理
-			if (localfile.exists()) {
-				localfile.delete();
+		} finally {
+			try {
+				if (outSteam != null) {
+					outSteam.close();
+				}
+				ftpClient.disconnect();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			localfile.createNewFile();
-			fos = new FileOutputStream(localfile);
-
-			ftpClient.setBufferSize(1024);
-			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-			ftpClient.retrieveFile(downinfo.getFilepath(), fos);
-			fos.flush();
-			return localfile;
-		}  finally {
-			if (fos != null) {
-				fos.close();
-			}	
 		}
-
+		return localfile;
 	}
 }

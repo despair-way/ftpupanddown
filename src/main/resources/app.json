@@ -1,19 +1,39 @@
-{
-	"source": {		
-		"type":"SFTP",
-		"username": "jiurong",
-		"password": "Jr88362624",
-		"ip": "192.168.1.20",
-		"port": 32022,
-		"filepath": "test/upload.txt",
 
+[
+	{
+		"source": {
+			"type": "SFTP",
+			"username": "jiurong",
+			"password": "Jr88362624",
+			"ip": "192.168.1.20",
+			"port": 32022,
+			"filepath": "test/1test.txt"
+		},
+		"target": {
+			"type": "FTP",
+			"username": "remote",
+			"password": "Jiurong20151009",
+			"ip": "101.200.242.103",
+			"port": 21,
+			"filepath": "1test.txt"
+		}
 	},
-	"target": {
-		"type":"FTP",
-		"username": "remote",
-		"password": "Jiurong20151009",
-		"ip": "101.200.242.103",
-		"port": 21,
-		"filepath": "Downloadtest.txt"
+	{
+		"source": {
+			"type": "FTP",
+			"username": "remote",
+			"password": "Jiurong20151009",
+			"ip": "101.200.242.103",
+			"port": 21,
+			"filepath": "2test.txt"
+		},
+		"target": {
+			"type": "SFTP",
+			"username": "jiurong",
+			"password": "Jr88362624",
+			"ip": "192.168.1.20",
+			"port": 32022,
+			"filepath": "test/2test.txt"
+		}
 	}
-}
+]

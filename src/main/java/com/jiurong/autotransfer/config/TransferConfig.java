@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016-2018 the original author or authors.
+ *
+ * All right reserved by JiurongTech
+ */
 package com.jiurong.autotransfer.config;
 
 import java.io.IOException;
@@ -9,17 +14,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class TransferConfig {
 
 	private SourceConfig source;
-	private SourceConfig target;
+	private TargetConfig target;
 	public SourceConfig getSource() {
 		return source;
 	}
 	public void setSource(SourceConfig source) {
 		this.source = source;
 	}
-	public SourceConfig getTarget() {
+	public TargetConfig getTarget() {
 		return target;
 	}
-	public void setTarget(SourceConfig target) {
+	public void setTarget(TargetConfig target) {
 		this.target = target;
 	}
 	

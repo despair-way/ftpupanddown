@@ -8,7 +8,12 @@ package com.jiurong.autotransfer;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jiurong.autotransfer.config.SourceConfig;
+import com.jiurong.autotransfer.config.TargetConfig;
 import com.jiurong.autotransfer.config.TransferConfig;
 
 public class Main {
@@ -16,23 +21,31 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		InputStream content = TransferConfig.class.getClassLoader().getResourceAsStream("app.json");
 		ObjectMapper objectMapper = new ObjectMapper();
-		TransferConfig config = objectMapper.readValue(content, TransferConfig.class);
+		List<TransferConfig> list = objectMapper.readValue(content, new TypeReference<List<TransferConfig>>() {
+		});
 		File localfile = null;
-		if (config.getSource().getType().equals("FTP")) {
-			localfile = FTPUpAndDown.ftpDown(config.getTarget().getUsername(), config.getTarget().getPassword(),
-					config.getTarget().getIp(), config.getTarget().getPort(), config.getTarget().getFilepath());
-		} else {
-			localfile = FTPUpAndDown.sftpDown(config.getTarget().getUsername(), config.getTarget().getPassword(),
-					config.getTarget().getIp(), config.getTarget().getPort(), config.getTarget().getFilepath());
-		}
-		if (config.getSource().getType().equals("FTP")) {
-			FTPUpAndDown.ftpUp(config.getSource().getUsername(), config.getSource().getPassword(),
-					config.getSource().getIp(), config.getSource().getPort(), config.getSource().getFilepath(),
-					localfile);
-		} else {
-			FTPUpAndDown.sftpUp(config.getSource().getUsername(), config.getSource().getPassword(),
-					config.getSource().getIp(), config.getSource().getPort(), config.getSource().getFilepath(),
-					localfile);
+		try {
+			for (int i = 0; i < list.size(); i++) {
+				SourceConfig source = list.get(i).getSource();
+				TargetConfig target = list.get(i).getTarget();
+
+				if (source.getType().equals("FTP")) {
+					localfile = FTPUpAndDown.ftpDown(source.getUsername(), source.getPassword(), source.getIp(),
+							source.getPort(), source.getFilepath());
+				} else {
+					localfile = FTPUpAndDown.sftpDown(source.getUsername(), source.getPassword(), source.getIp(),
+							source.getPort(), source.getFilepath());
+				}
+				if (target.getType().equals("FTP")) {
+					FTPUpAndDown.ftpUp(target.getUsername(), target.getPassword(), target.getIp(), target.getPort(),
+							target.getFilepath(), localfile);
+				} else {
+					FTPUpAndDown.sftpUp(target.getUsername(), target.getPassword(), target.getIp(), target.getPort(),
+							target.getFilepath(), localfile);
+				}
+			}
+		} finally {
+			localfile.deleteOnExit();
 		}
 	}
 }
