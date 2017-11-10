@@ -63,7 +63,7 @@ public class FTPUpAndDown {
 			sftp.cd(file.getParent());
 			inStream = new FileInputStream(localfile);
 			;
-			sftp.put(inStream, localfile.getName());
+			sftp.put(inStream, FilenameUtils.getName(filepath));
 		} finally {
 			if (inStream != null) {
 				try {
